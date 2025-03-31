@@ -1,8 +1,39 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import Image from "next/image";
 import Confetti from "react-confetti";
+
+const fakeUser = {
+  name: "Vitya CodeWizard",
+  avatarPlaceholder: "VC",
+};
+
+const fakeRepos = [
+  {
+    id: 1,
+    name: "cool-project",
+    description: "Probably the next big thing.",
+    language: "TypeScript",
+  },
+  {
+    id: 2,
+    name: "dotfiles",
+    description: "My personal config files.",
+    language: "Shell",
+  },
+  {
+    id: 3,
+    name: "learning-rust",
+    description: "Notes and code while learning Rust.",
+    language: "Rust",
+  },
+  {
+    id: 4,
+    name: "prank-app",
+    description: "Top secret project.",
+    language: "JavaScript",
+  },
+];
 
 export default function Home() {
   const [showVideo, setShowVideo] = useState(false);
@@ -34,31 +65,81 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gray-900 text-white font-sans p-4 overflow-hidden">
+    <div className="flex flex-col min-h-screen bg-gray-900 text-gray-200 font-sans overflow-hidden">
       {!showVideo ? (
         <>
-          <header className="w-full p-4 text-center mb-8">
-            <h1 className="text-2xl font-bold">GitBub</h1>
-            <p className="text-sm text-gray-400">Your friendly code pet</p>
+          <header className="w-full p-4 bg-gray-800 border-b border-gray-700 flex items-center justify-between">
+            <div className="flex items-center">
+              <span className="text-xl mr-2">👾</span>{" "}
+              <h1 className="text-xl font-bold text-white">GitBub</h1>
+            </div>
+            <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-xs font-bold">
+              {fakeUser.avatarPlaceholder}
+            </div>
           </header>
 
-          <main className="flex flex-col items-center justify-center flex-grow w-full">
-            <p className="mb-6 text-lg text-center">
-              Ready to start something amazing?
-            </p>
-            <button
-              onClick={handleCreateClick}
-              className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg text-lg shadow-lg transition duration-300 ease-in-out transform hover:scale-105"
-            >
-              Create GitBub
-            </button>
-            <p className="mt-4 text-xs text-gray-500">
-              (It's totally not a trap)
+          <main className="flex-grow w-full max-w-4xl mx-auto p-4 md:p-6">
+            <div className="flex items-center mb-6 p-4 bg-gray-800 rounded-lg border border-gray-700">
+              <div className="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center text-lg font-bold mr-4">
+                {fakeUser.avatarPlaceholder}
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-white">
+                  {fakeUser.name}
+                </h2>
+                <p className="text-sm text-gray-400">
+                  Professional Button Clicker
+                </p>
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-white">Repositories</h3>
+              <button
+                onClick={handleCreateClick}
+                className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md text-sm shadow transition duration-200 ease-in-out"
+              >
+                ✨ Create GitBub
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              {fakeRepos.map((repo) => (
+                <div
+                  key={repo.id}
+                  className="p-4 bg-gray-800 rounded-md border border-gray-700 hover:border-gray-600 transition-colors"
+                >
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleCreateClick();
+                    }}
+                    className="text-blue-400 hover:underline font-semibold"
+                  >
+                    {fakeUser.name.split(" ")[0].toLowerCase()} / {repo.name}
+                  </a>
+                  <p className="text-sm text-gray-400 mt-1 mb-2">
+                    {repo.description}
+                  </p>
+                  {repo.language && (
+                    <span className="text-xs text-gray-500">
+                      {repo.language}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <p className="mt-6 text-center text-xs text-gray-500">
+              (Clicking anything might lead to unexpected fun... or &apos;Create
+              GitBub&apos;)
             </p>
           </main>
 
-          <footer className="w-full p-4 text-center text-xs text-gray-600 mt-8">
-            © 2024 GitBub Inc. (Definitely real)
+          <footer className="w-full p-3 text-center text-xs text-gray-500 border-t border-gray-700 mt-8">
+            © 2024 GitBub Inc. | Not affiliated with GitHub | Terms | Privacy
+            (lol)
           </footer>
         </>
       ) : (

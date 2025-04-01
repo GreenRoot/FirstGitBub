@@ -4,32 +4,32 @@ import { useState, useRef, useEffect } from "react";
 import Confetti from "react-confetti";
 
 const fakeUser = {
-  name: "Vitya CodeWizard",
-  avatarPlaceholder: "VC",
+  name: "Butek CodeWizard",
+  avatarPlaceholder: "BCW",
 };
 
 const fakeRepos = [
   {
     id: 1,
-    name: "cool-project",
+    name: "learning-astley",
     description: "Probably the next big thing.",
     language: "TypeScript",
   },
   {
     id: 2,
     name: "dotfiles",
-    description: "My personal config files.",
-    language: "Shell",
+    description: "Config files.",
+    language: "Python",
   },
   {
     id: 3,
-    name: "learning-rust",
-    description: "Notes and code while learning Rust.",
-    language: "Rust",
+    name: "learning-rick",
+    description: "Notes and code while learning rick.",
+    language: "Python",
   },
   {
     id: 4,
-    name: "prank-app",
+    name: "ppa-krap-ton",
     description: "Top secret project.",
     language: "JavaScript",
   },
@@ -40,6 +40,7 @@ export default function Home() {
   const [showFinalMessage, setShowFinalMessage] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+  const messageTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -47,12 +48,30 @@ export default function Home() {
     };
     handleResize();
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+
+    if (showVideo) {
+      messageTimerRef.current = setTimeout(() => {
+        setShowFinalMessage(true);
+      }, 7000);
+    }
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      if (messageTimerRef.current) {
+        clearTimeout(messageTimerRef.current);
+      }
+    };
+  }, [showVideo]);
 
   const handleCreateClick = () => {
     setShowVideo(true);
     setShowFinalMessage(false);
+    if (messageTimerRef.current) {
+      clearTimeout(messageTimerRef.current);
+    }
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+    }
     setTimeout(() => {
       videoRef.current?.play().catch((error) => {
         console.error("Video play failed:", error);
@@ -60,8 +79,15 @@ export default function Home() {
     }, 100);
   };
 
-  const handleVideoEnd = () => {
-    setShowFinalMessage(true);
+  const handleTryAgain = () => {
+    if (videoRef.current) {
+      videoRef.current.pause();
+    }
+    if (messageTimerRef.current) {
+      clearTimeout(messageTimerRef.current);
+    }
+    setShowVideo(false);
+    setShowFinalMessage(false);
   };
 
   return (
@@ -138,26 +164,25 @@ export default function Home() {
           </main>
 
           <footer className="w-full p-3 text-center text-xs text-gray-500 border-t border-gray-700 mt-8">
-            © 2024 GitBub Inc. | Not affiliated with GitHub | Terms | Privacy
+            © 01 04 2025 GitBub Inc. | Not affiliated with GitHub | Terms | Privacy
             (lol)
           </footer>
         </>
       ) : (
         <div className="w-full h-screen flex flex-col items-center justify-center bg-black relative">
-          {!showFinalMessage ? (
-            <video
-              ref={videoRef}
-              src="/rickroll.mp4"
-              controls
-              preload="auto"
-              playsInline
-              className="max-w-full max-h-full z-10"
-              onEnded={handleVideoEnd}
-            >
-              Your browser does not support the video tag.
-            </video>
-          ) : (
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center z-20">
+          <video
+            ref={videoRef}
+            src="/rickroll.mp4"
+            controls
+            preload="auto"
+            playsInline
+            className="max-w-full max-h-full object-contain"
+          >
+            Your browser does not support the video tag.
+          </video>
+
+          {showFinalMessage && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center z-20 bg-black bg-opacity-50">
               <Confetti
                 width={windowSize.width}
                 height={windowSize.height}
@@ -165,17 +190,16 @@ export default function Home() {
                 numberOfPieces={400}
                 gravity={0.3}
               />
-              <h2 className="text-4xl font-bold text-yellow-400 animate-bounce">
-                АХхахаха Витёчек, как дела?
-              </h2>
+              <div className="text-4xl font-bold text-yellow-400 animate-bounce px-4">
+                <p>АХхахаха</p>
+                <p>Витёчек</p>
+                <p>как дела?</p>
+              </div>
               <button
-                onClick={() => {
-                  setShowVideo(false);
-                  setShowFinalMessage(false);
-                }}
-                className="mt-8 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                onClick={handleTryAgain}
+                className="mt-8 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded z-30"
               >
-                Try Again?
+                LOL, ещё разок?
               </button>
             </div>
           )}
